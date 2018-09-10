@@ -1,13 +1,40 @@
 {
   "interactionModel": {
     "languageModel": {
-      "invocationName": "audio stream starter",
-      "intents": [{
+      "invocationName": "lars streamer",
+      "types": [
+        {
+          "name": "STREAMS",
+          "values": [
+            {
+              "id": 1,
+              "name": {
+                "value": "stream one",
+                "synonyms": []
+              }
+            },
+            {
+              "id": 2,
+              "name": {
+                "value": "stream two",
+                "synonyms": []
+              }
+            }
+          ]
+        }
+      ],
+      "intents": [
+        {
           "name": "PlayStream",
+          "slots":[
+            {
+                "name":"stream",
+                "type":"STREAMS"
+            }
+          ],
           "samples": [
-            "play",
-            "start",
-            "play stream"
+            "play {stream}",
+            "let's hear some {stream}"
           ]
         },
         {

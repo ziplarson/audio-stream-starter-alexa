@@ -25,67 +25,88 @@ exports.handler = (event, context, callback) => {
 };
 
 var handlers = {
-  'LaunchRequest': function() {
+  'LaunchRequest': function () {
     this.emit('PlayStream');
   },
-  'PlayStream': function() {
-    this.response.speak('Enjoy.').audioPlayerPlay('REPLACE_ALL', streamInfo.url, streamInfo.url, null, 0);
+  'PlayStream': function () {
+
+    console.log(this.event.request.intent.slots);
+
+    let resolution = this.event.request.intent.slots.stream.resolutions.resolutionsPerAuthority[0];
+    let stream = 1;
+
+    if (resolution.status.code === "ER_SUCCESS_MATCH") {
+      stream = parseInt(resolution.values[0].value.id);
+    }
+
+    switch (stream) {
+      case 1:
+        streamInfo.url = 'https://streaming.radionomy.com/RadioXUS?lang=en-US&appName=iTunes.m3u';
+        break;
+      case 2:
+        streamInfo.url = 'https://streaming.radionomy.com/RadioXUS?lang=en-US&appName=iTunes.m3u';
+        break;
+      default:
+        streamInfo.url = 'https://streaming.radionomy.com/RadioXUS?lang=en-US&appName=iTunes.m3u';
+    }
+
+    this.response.speak(`Starting stream number ${stream}`).audioPlayerPlay('REPLACE_ALL', streamInfo.url, streamInfo.url, null, 0);
     this.emit(':responseReady');
   },
-  'AMAZON.HelpIntent': function() {
+  'AMAZON.HelpIntent': function () {
     // skill help logic goes here
     this.emit(':responseReady');
   },
-  'SessionEndedRequest': function() {
+  'SessionEndedRequest': function () {
     // no session ended logic needed
   },
-  'ExceptionEncountered': function() {
+  'ExceptionEncountered': function () {
     console.log("\n---------- ERROR ----------");
     console.log("\n" + JSON.stringify(this.event.request, null, 2));
     this.callback(null, null)
   },
-  'Unhandled': function() {
+  'Unhandled': function () {
     this.response.speak('Sorry. Something went wrong.');
     this.emit(':responseReady');
   },
-  'AMAZON.NextIntent': function() {
+  'AMAZON.NextIntent': function () {
     this.response.speak('This skill does not support skipping.');
     this.emit(':responseReady');
   },
-  'AMAZON.PreviousIntent': function() {
+  'AMAZON.PreviousIntent': function () {
     this.response.speak('This skill does not support skipping.');
     this.emit(':responseReady');
   },
-  'AMAZON.PauseIntent': function() {
+  'AMAZON.PauseIntent': function () {
     this.emit('AMAZON.StopIntent');
   },
-  'AMAZON.CancelIntent': function() {
+  'AMAZON.CancelIntent': function () {
     this.emit('AMAZON.StopIntent');
   },
-  'AMAZON.StopIntent': function() {
+  'AMAZON.StopIntent': function () {
     this.response.speak('Okay. I\'ve stopped the stream.').audioPlayerStop();
     this.emit(':responseReady');
   },
-  'AMAZON.ResumeIntent': function() {
+  'AMAZON.ResumeIntent': function () {
     this.emit('PlayStream');
   },
-  'AMAZON.LoopOnIntent': function() {
+  'AMAZON.LoopOnIntent': function () {
     this.emit('AMAZON.StartOverIntent');
   },
-  'AMAZON.LoopOffIntent': function() {
+  'AMAZON.LoopOffIntent': function () {
     this.emit('AMAZON.StartOverIntent');
   },
-  'AMAZON.ShuffleOnIntent': function() {
+  'AMAZON.ShuffleOnIntent': function () {
     this.emit('AMAZON.StartOverIntent');
   },
-  'AMAZON.ShuffleOffIntent': function() {
+  'AMAZON.ShuffleOffIntent': function () {
     this.emit('AMAZON.StartOverIntent');
   },
-  'AMAZON.StartOverIntent': function() {
+  'AMAZON.StartOverIntent': function () {
     this.response.speak('Sorry. I can\'t do that yet.');
     this.emit(':responseReady');
   },
-  'PlayCommandIssued': function() {
+  'PlayCommandIssued': function () {
 
     if (this.event.request.type === 'IntentRequest' || this.event.request.type === 'LaunchRequest') {
       var cardTitle = streamInfo.subtitle;
@@ -97,26 +118,26 @@ var handlers = {
     this.response.speak('Enjoy.').audioPlayerPlay('REPLACE_ALL', streamInfo.url, streamInfo.url, null, 0);
     this.emit(':responseReady');
   },
-  'PauseCommandIssued': function() {
+  'PauseCommandIssued': function () {
     this.emit('AMAZON.StopIntent');
   }
 }
 
 var audioEventHandlers = {
-  'PlaybackStarted': function() {
+  'PlaybackStarted': function () {
     this.emit(':responseReady');
   },
-  'PlaybackFinished': function() {
+  'PlaybackFinished': function () {
     this.emit(':responseReady');
   },
-  'PlaybackStopped': function() {
+  'PlaybackStopped': function () {
     this.emit(':responseReady');
   },
-  'PlaybackNearlyFinished': function() {
+  'PlaybackNearlyFinished': function () {
     this.response.audioPlayerPlay('REPLACE_ALL', streamInfo.url, streamInfo.url, null, 0);
     this.emit(':responseReady');
   },
-  'PlaybackFailed': function() {
+  'PlaybackFailed': function () {
     this.response.audioPlayerClearQueue('CLEAR_ENQUEUED');
     this.emit(':responseReady');
   }

@@ -1,19 +1,20 @@
 {
   "deploy_settings": {
     "default": {
-      "skill_id": "",
+      "skill_id": "amzn1.ask.skill.0bc5d748-12b2-4ab8-ae6c-bb17db7f3222",
       "was_cloned": false,
       "merge": {
-        "skillManifest": {
+        "manifest": {
           "apis": {
             "custom": {
               "endpoint": {
-                "uri": "ask-custom-audio-stream-starter-default"
+                "uri": "ask-custom-lars-streamer-default"
               }
             }
           }
         }
-      }
+      },
+      "in_skill_products": []
     }
   }
 }
